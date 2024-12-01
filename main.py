@@ -198,7 +198,7 @@ if __name__ == "__main__":
     audio.init(audio_dir)
 
     dictation_file_path = get_dictation_file_path()
-    dictation_file_name = dictation_file_path[len(words_dir) + 1: -3]
+    dictation_file_name = dictation_file_path[len(words_dir) + 1 : -3]
 
     time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     result_file_name = f"{dictation_file_name}_{time}_grade.txt"
