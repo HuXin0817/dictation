@@ -55,17 +55,15 @@ def load_entries(file_name: str):
 
 
 def write_entries(file_name: str, entries: list):
-    order_entries = sorted(
-        entries, key=lambda entry: (entry.is_phrase, entry.english.lower())
-    )
+    entries.sort(key=lambda entry: (entry.is_phrase, entry.english.lower()))
 
     max_english_length = 0
-    for entry in order_entries:
+    for entry in entries:
         max_english_length = max(len(entry.english), max_english_length)
     max_english_length += 1
 
     with open(file_name, "w", encoding="utf-8") as file:
-        for entry in order_entries:
+        for entry in entries:
             english_part = entry.english.ljust(max_english_length)
             chinese_part = entry.chinese
             file.write(f"{english_part} {chinese_part}\n\n")
