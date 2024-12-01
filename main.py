@@ -234,8 +234,8 @@ if __name__ == "__main__":
                 word_number += 1
 
             with open(result_file_path, "w", encoding="utf-8") as file:
-                for entry, count in dictation_count.items():
-                    file.write(f"✅ {entry} (dictated {count} times)\n\n")
+                for entry_str, count in dictation_count.items():
+                    file.write(f"✅ {entry_str} (dictated {count} times)\n\n")
 
         if len(wrong_entries) == 0:
             print("Dictation finished! 🎉")
