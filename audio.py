@@ -8,7 +8,6 @@ from pygame import mixer
 
 def init(audio_dir: str):
     mixer.init()
-
     for root, _, files in os.walk(audio_dir):
         for file in files:
             if file.endswith(".mp3"):
