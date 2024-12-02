@@ -1,9 +1,9 @@
+import concurrent.futures
 import os
 import random
 import subprocess
 import sys
 import threading
-from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from glob import glob
 
@@ -158,10 +158,14 @@ def dictation(entry: Entry):
 def process_file(file: str):
     global all_entry_chinese, lock
     entries = load_entries(file)
+
+    process_entry = lambda entry: audio.generate(entry.english, entry.audio_path)
+    with concurrent.futures.ThreadPoolExecutor(max_workers=16) as executor:
+        executor.map(process_entry, entries)
+
     entry_chinese = []
     for entry in entries:
         entry_chinese.append(str(entry.chinese))
-        audio.generate(entry.english, entry.audio_path)
     with lock:
         all_entry_chinese += entry_chinese
     write_entries(file, entries)
@@ -169,7 +173,8 @@ def process_file(file: str):
 
 def get_dictation_file_path():
     files = glob(f"{words_dir}/*.md")
-    with ThreadPoolExecutor(max_workers=64) as executor:
+    max_workers = len(files)
+    with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers) as executor:
         executor.map(process_file, files)
 
     files.sort()
