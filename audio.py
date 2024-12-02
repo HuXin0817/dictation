@@ -8,6 +8,11 @@ from pygame import mixer
 
 def init(audio_dir: str):
     mixer.init()
+    delete_invalid_mp3(audio_dir)
+
+
+def delete_invalid_mp3(audio_dir: str):
+    n = 0
     for root, _, files in os.walk(audio_dir):
         for file in files:
             if file.endswith(".mp3"):
@@ -17,6 +22,8 @@ def init(audio_dir: str):
                 except mutagen.MutagenError:
                     print(f"⚠️ {file} is not a valid MP3 file, deleting...")
                     os.remove(file_path)
+                    n += 1
+    return n
 
 
 def generate(word: str, path: str):

@@ -15,7 +15,7 @@ grade_dir = "./grade"
 words_dir = "./words"
 
 all_entry_chinese = []
-lock = threading.Lock()
+all_entry_chinese_lock = threading.Lock()
 
 
 class Entry:
@@ -156,26 +156,28 @@ def dictation(entry: Entry):
 
 
 def process_file(file: str):
-    global all_entry_chinese, lock
+    global all_entry_chinese, all_entry_chinese_lock
     entries = load_entries(file)
 
     process_entry = lambda entry: audio.generate(entry.english, entry.audio_path)
-    with concurrent.futures.ThreadPoolExecutor(max_workers=16) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=32) as executor:
         executor.map(process_entry, entries)
 
     entry_chinese = []
     for entry in entries:
         entry_chinese.append(str(entry.chinese))
-    with lock:
+    with all_entry_chinese_lock:
         all_entry_chinese += entry_chinese
     write_entries(file, entries)
 
 
 def get_dictation_file_path():
     files = glob(f"{words_dir}/*.md")
-    max_workers = len(files)
-    with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers) as executor:
+    with concurrent.futures.ProcessPoolExecutor(max_workers=len(files)) as executor:
         executor.map(process_file, files)
+
+    if audio.delete_invalid_mp3(audio_dir) > 0:
+        return get_dictation_file_path()
 
     files.sort()
     print("\n📖 Dictation files:\n")
