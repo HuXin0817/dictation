@@ -27,10 +27,9 @@ def delete_invalid_mp3(audio_dir: str):
 
 
 def generate(word: str, path: str):
-    if not os.path.exists(path):
-        tts = gtts(text=word, lang="en")
-        tts.save(path)
-        print(f'💿 finish generate audio "{word}" to "{path}".')
+    tts = gtts(text=word, lang="en")
+    tts.save(path)
+    print(f'💿 finish generate audio "{word}" to "{path}".')
 
 
 def play(audio_path: str):
