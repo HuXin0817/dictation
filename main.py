@@ -3,7 +3,6 @@ import os
 import random
 import subprocess
 import sys
-import threading
 from datetime import datetime
 from glob import glob
 
@@ -15,7 +14,6 @@ grade_dir = "./grade"
 words_dir = "./words"
 
 all_entry_chinese = []
-all_entry_chinese_lock = threading.Lock()
 
 
 class Entry:
@@ -155,26 +153,21 @@ def dictation(entry: Entry):
     return True
 
 
-def process_file(file: str):
-    global all_entry_chinese, all_entry_chinese_lock
-    entries = load_entries(file)
+def get_dictation_file_path():
+    files = glob(f"{words_dir}/*.md")
+
+    no_audio_entries = []
+    for file in files:
+        file_entries = load_entries(file)
+        for entry in file_entries:
+            all_entry_chinese.append(entry.chinese)
+            if not os.path.exists(entry.audio_path):
+                no_audio_entries.append(entry)
+        write_entries(file, file_entries)
 
     process_entry = lambda entry: audio.generate(entry.english, entry.audio_path)
     with concurrent.futures.ThreadPoolExecutor(max_workers=32) as executor:
-        executor.map(process_entry, entries)
-
-    entry_chinese = []
-    for entry in entries:
-        entry_chinese.append(str(entry.chinese))
-    with all_entry_chinese_lock:
-        all_entry_chinese += entry_chinese
-    write_entries(file, entries)
-
-
-def get_dictation_file_path():
-    files = glob(f"{words_dir}/*.md")
-    with concurrent.futures.ProcessPoolExecutor(max_workers=len(files)) as executor:
-        executor.map(process_file, files)
+        executor.map(process_entry, no_audio_entries)
 
     if audio.delete_invalid_mp3(audio_dir) > 0:
         return get_dictation_file_path()
@@ -183,9 +176,10 @@ def get_dictation_file_path():
     print("\n📖 Dictation files:\n")
     for i, file in enumerate(files, 1):
         print(f" 💿 {i} {file[len(words_dir) + 1:-3]}")
+    print(f" 💿 {len(files) + 1} REVIEW\n")
 
     while True:
-        user_choice = input("\n🎵 Please choose a dictation file id: ").strip(" \u3000")
+        user_choice = input("🎵 Please choose a dictation file id: ").strip(" \u3000")
         try:
             file_index = int(user_choice)
         except ValueError:
@@ -193,6 +187,8 @@ def get_dictation_file_path():
         if 0 < file_index <= len(files):
             print()
             return files[file_index - 1]
+        elif file_index == len(files) + 1:
+            return "REVIEW"
 
 
 if __name__ == "__main__":
@@ -203,16 +199,26 @@ if __name__ == "__main__":
     audio.init(audio_dir)
 
     dictation_file_path = get_dictation_file_path()
-    dictation_file_name = dictation_file_path[len(words_dir) + 1 : -3]
+    dictation_file_name = ""
+    entries = []
+    if dictation_file_path == "REVIEW":
+        files = glob(f"{words_dir}/*.md")
+        for file in files:
+            file_entries = load_entries(file)
+            entries += file_entries
+        dictation_file_name = "REVIEW"
+        random.shuffle(entries)
+        entries = entries[:30]
+    else:
+        dictation_file_name = dictation_file_path[len(words_dir) + 1 : -3]
+        entries = load_entries(dictation_file_path)
+        random.shuffle(entries)
 
     time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     result_file_name = f"{dictation_file_name}_{time}_grade.txt"
     result_file_path = os.path.join(grade_dir, result_file_name)
 
     print(f'\n🎧 Start dictation for "{dictation_file_name}".')
-
-    entries = load_entries(dictation_file_path)
-    random.shuffle(entries)
 
     word_number = len(entries)
     word_id = 0
