@@ -1,5 +1,4 @@
 import os
-import threading
 from concurrent.futures import ThreadPoolExecutor
 
 from gtts import gTTS as gtts
@@ -7,7 +6,7 @@ from mutagen import MutagenError
 from mutagen.mp3 import MP3
 from pygame import mixer
 
-threading.Thread(mixer.init()).start()
+mixer.init()
 
 
 def check_and_delete(file_path: str) -> bool:
