@@ -1,10 +1,11 @@
-import concurrent.futures
 import os
 import random
 import subprocess
-import sys
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from glob import glob
+
+from natsort import natsorted
 
 import audio
 from align_strings import align_strings
@@ -154,7 +155,7 @@ def dictation(entry: Entry):
 
 
 def get_dictation_file_path():
-    files = glob(f"{words_dir}/*.md")
+    files = natsorted(glob(f"{words_dir}/*.md"))
 
     no_audio_entries = []
     for file in files:
@@ -166,13 +167,12 @@ def get_dictation_file_path():
         write_entries(file, file_entries)
 
     process_entry = lambda entry: audio.generate(entry.english, entry.audio_path)
-    with concurrent.futures.ThreadPoolExecutor(max_workers=32) as executor:
+    with ThreadPoolExecutor(max_workers=32) as executor:
         executor.map(process_entry, no_audio_entries)
 
     if audio.delete_invalid_mp3(audio_dir) > 0:
         return get_dictation_file_path()
 
-    files.sort()
     print("\n📖 Dictation files:\n")
     for i, file in enumerate(files, 1):
         print(f" 💿 {i} {file[len(words_dir) + 1:-3]}")
@@ -251,6 +251,6 @@ if __name__ == "__main__":
         if len(wrong_entries) == 0:
             print("Dictation finished! 🎉")
             subprocess.run(["open", grade_dir])
-            sys.exit()
+            break
 
         entries = wrong_entries

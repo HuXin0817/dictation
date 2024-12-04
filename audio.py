@@ -1,4 +1,5 @@
 import os
+import threading
 
 import mutagen
 import mutagen.mp3
@@ -7,7 +8,7 @@ from pygame import mixer
 
 
 def init(audio_dir: str):
-    mixer.init()
+    threading.Thread(mixer.init()).start()
     delete_invalid_mp3(audio_dir)
 
 
@@ -27,9 +28,14 @@ def delete_invalid_mp3(audio_dir: str):
 
 
 def generate(word: str, path: str):
-    tts = gtts(text=word, lang="en")
-    tts.save(path)
+    try:
+        tts = gtts(text=word, lang="en")
+        tts.save(path)
+    except Exception as e:
+        print(f'⚠️ generate audio "{word}" failed. Error: {e}')
+        return False
     print(f'💿 finish generate audio "{word}" to "{path}".')
+    return True
 
 
 def play(audio_path: str):
