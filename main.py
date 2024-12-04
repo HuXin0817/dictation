@@ -160,11 +160,13 @@ def dictation(entry: Entry):
 def get_dictation_file_path():
     files = natsorted(glob(f"{words_dir}/*.md"))
 
+    global all_entry_chinese
     for file in files:
         file_entries = load_entries(file)
         for entry in file_entries:
             all_entry_chinese.append(entry.chinese)
         write_entries(file, file_entries)
+    all_entry_chinese = list(set(all_entry_chinese))
 
     print("💿 Start generating audios...")
     with Timer() as timer:
