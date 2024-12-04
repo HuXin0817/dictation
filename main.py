@@ -9,6 +9,7 @@ from natsort import natsorted
 
 import audio
 from align_strings import align_strings
+from cleaner import Cleaner
 
 audio_dir = "./audios"
 grade_dir = "./grade"
@@ -197,6 +198,8 @@ if __name__ == "__main__":
     os.makedirs(grade_dir, exist_ok=True)
     os.makedirs(audio_dir, exist_ok=True)
 
+    Cleaner.init()
+
     audio.init(audio_dir)
 
     dictation_file_path = get_dictation_file_path()
@@ -241,13 +244,14 @@ if __name__ == "__main__":
                 dictation_count[entry_str] = 1
             else:
                 dictation_count[entry_str] += 1
-            if not dictation(entry):
-                wrong_entries.append(entry)
-                word_number += 1
+            with Cleaner():
+                if not dictation(entry):
+                    wrong_entries.append(entry)
+                    word_number += 1
 
-            with open(result_file_path, "w", encoding="utf-8") as file:
-                for entry_str, count in dictation_count.items():
-                    file.write(f"✅ {entry_str} (dictated {count} times)\n\n")
+                with open(result_file_path, "w", encoding="utf-8") as file:
+                    for entry_str, count in dictation_count.items():
+                        file.write(f"✅ {entry_str} (dictated {count} times)\n\n")
 
         if len(wrong_entries) == 0:
             print("Dictation finished! 🎉")
