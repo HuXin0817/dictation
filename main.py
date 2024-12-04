@@ -265,7 +265,7 @@ if __name__ == "__main__":
                         file.write(f"✅ {entry_str} (dictated {count} times)\n\n")
 
         if len(wrong_entries) == 0:
-            print("Dictation finished! 🎉")
+            print("\nDictation finished! 🎉")
             subprocess.run(["open", grade_dir])
             break
 
