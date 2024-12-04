@@ -1,7 +1,7 @@
 import unicodedata
 
 
-def count_fullwidth_and_halfwidth(input_string: str):
+def count_fullwidth_and_halfwidth(input_string: str) -> (int, int):
     fullwidth_count = 0
     halfwidth_count = 0
 
@@ -14,7 +14,7 @@ def count_fullwidth_and_halfwidth(input_string: str):
     return fullwidth_count, halfwidth_count
 
 
-def align_strings(string1: str, string2: str):
+def align_strings(string1: str, string2: str) -> (str, str):
     fullwidth_count1, halfwidth_count1 = count_fullwidth_and_halfwidth(string1)
     fullwidth_count2, halfwidth_count2 = count_fullwidth_and_halfwidth(string2)
 

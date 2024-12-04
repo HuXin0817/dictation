@@ -10,7 +10,7 @@ from pygame import mixer
 threading.Thread(mixer.init()).start()
 
 
-def check_and_delete(file_path):
+def check_and_delete(file_path: str) -> bool:
     try:
         MP3(file_path)
         return False
@@ -20,7 +20,7 @@ def check_and_delete(file_path):
         return True
 
 
-def delete_invalid_mp3(audio_dir: str):
+def delete_invalid_mp3(audio_dir: str) -> int:
     file_paths = []
 
     for root, _, files in os.walk(audio_dir):
@@ -34,7 +34,7 @@ def delete_invalid_mp3(audio_dir: str):
     return sum(results)
 
 
-def generate(word: str, path: str):
+def generate(word: str, path: str) -> bool:
     try:
         tts = gtts(text=word, lang="en")
         tts.save(path)
@@ -45,6 +45,6 @@ def generate(word: str, path: str):
     return True
 
 
-def play(audio_path: str):
+def play(audio_path: str) -> None:
     mixer.music.load(audio_path)
     mixer.music.play()

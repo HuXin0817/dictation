@@ -3,6 +3,7 @@ import random
 import subprocess
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
+from functools import lru_cache
 from glob import glob
 
 from contexttimer import Timer
@@ -42,7 +43,8 @@ class Entry:
         return self.english + " " + self.chinese
 
 
-def load_entries(file_name: str):
+@lru_cache(maxsize=128)
+def load_entries(file_name: str) -> list[Entry]:
     with open(file_name, "r", encoding="utf-8") as file:
         lines = file.read().splitlines()
 
@@ -55,7 +57,7 @@ def load_entries(file_name: str):
         return entries
 
 
-def write_entries(file_name: str, entries: list):
+def write_entries(file_name: str, entries: list[Entry]) -> None:
     key = lambda entry: (entry.is_phrase, entry.english.lower())
     entries.sort(key=key)
 
@@ -71,7 +73,7 @@ def write_entries(file_name: str, entries: list):
             file.write(f"{english_part} {chinese_part}\n\n")
 
 
-def get_choice():
+def get_choice() -> int:
     user_input = input("Your choice: ").strip(" \u3000")
 
     if user_input.isdigit():
@@ -93,7 +95,7 @@ def get_choice():
     return -1
 
 
-def ask_chinese_meaning(entry: Entry):
+def ask_chinese_meaning(entry: Entry) -> bool:
     choices = [entry.chinese]
     k = 0
     while len(choices) < min(4, len(all_entry_chinese)):
@@ -117,7 +119,7 @@ def ask_chinese_meaning(entry: Entry):
         return choices[user_choice].strip(" \u3000") == entry.chinese
 
 
-def get_answer(entry: Entry):
+def get_answer(entry: Entry) -> str:
     print("> ", end="")
     audio.play(entry.audio_path)
 
@@ -136,7 +138,7 @@ def get_answer(entry: Entry):
     return answer
 
 
-def dictation(entry: Entry):
+def dictation(entry: Entry) -> bool:
     answer = ""
     while answer == "":
         answer = get_answer(entry)
@@ -157,7 +159,7 @@ def dictation(entry: Entry):
     return True
 
 
-def get_dictation_file_path():
+def get_dictation_file_path() -> str:
     files = natsorted(glob(f"{words_dir}/*.md"))
 
     global all_entry_chinese
