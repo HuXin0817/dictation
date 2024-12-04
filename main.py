@@ -96,7 +96,7 @@ def get_choice():
 def ask_chinese_meaning(entry: Entry):
     choices = [entry.chinese]
     k = 0
-    while len(choices) < 4 and k < 10000:
+    while len(choices) < min(4, len(all_entry_chinese)):
         random_entry = random.choice(all_entry_chinese)
         k += 1
         if random_entry not in choices:
