@@ -54,7 +54,8 @@ def load_entries(file_name: str):
 
 
 def write_entries(file_name: str, entries: list):
-    entries.sort(key=lambda entry: (entry.is_phrase, entry.english.lower()))
+    key = lambda entry: (entry.is_phrase, entry.english.lower())
+    entries.sort(key=key)
 
     max_english_length = 0
     for entry in entries:
