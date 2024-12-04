@@ -43,7 +43,7 @@ class Entry:
         return self.english + " " + self.chinese
 
 
-@lru_cache(maxsize=128)
+@lru_cache(maxsize=None)
 def load_entries(file_name: str) -> list[Entry]:
     with open(file_name, "r", encoding="utf-8") as file:
         lines = file.read().splitlines()
