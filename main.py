@@ -5,6 +5,7 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from glob import glob
 
+from contexttimer import Timer
 from natsort import natsorted
 
 import audio
@@ -159,23 +160,33 @@ def dictation(entry: Entry):
 def get_dictation_file_path():
     files = natsorted(glob(f"{words_dir}/*.md"))
 
-    no_audio_entries = []
     for file in files:
         file_entries = load_entries(file)
         for entry in file_entries:
             all_entry_chinese.append(entry.chinese)
-            if not os.path.exists(entry.audio_path):
-                no_audio_entries.append(entry)
         write_entries(file, file_entries)
 
-    process_entry = lambda entry: audio.generate(entry.english, entry.audio_path)
-    with ThreadPoolExecutor(max_workers=32) as executor:
-        executor.map(process_entry, no_audio_entries)
+    print("💿 Start generating audios...")
+    with Timer() as timer:
+        process_entry = lambda entry: audio.generate(entry.english, entry.audio_path)
 
-    if audio.delete_invalid_mp3(audio_dir) > 0:
-        return get_dictation_file_path()
+        while True:
+            no_audio_entries = []
 
-    print("\n📖 Dictation files:\n")
+            for file in files:
+                for entry in load_entries(file):
+                    if not os.path.exists(entry.audio_path):
+                        no_audio_entries.append(entry)
+
+            if len(no_audio_entries) == 0 and audio.delete_invalid_mp3(audio_dir) == 0:
+                break
+
+            with ThreadPoolExecutor(max_workers=32) as executor:
+                executor.map(process_entry, no_audio_entries)
+
+    print(f"✨ Audio generation completed in {timer.elapsed:.2f} seconds.\n")
+    print("📖 Dictation files:\n")
+
     for i, file in enumerate(files, 1):
         print(f" 💿 {i} {file[len(words_dir) + 1:-3]}")
     print(f" 💿 {len(files) + 1} REVIEW\n")
@@ -197,10 +208,6 @@ if __name__ == "__main__":
     os.makedirs(words_dir, exist_ok=True)
     os.makedirs(grade_dir, exist_ok=True)
     os.makedirs(audio_dir, exist_ok=True)
-
-    Cleaner.init()
-
-    audio.init(audio_dir)
 
     dictation_file_path = get_dictation_file_path()
     dictation_file_name = ""

@@ -7,6 +7,8 @@ from mutagen import MutagenError
 from mutagen.mp3 import MP3
 from pygame import mixer
 
+threading.Thread(mixer.init()).start()
+
 
 def check_and_delete(file_path):
     try:
@@ -30,11 +32,6 @@ def delete_invalid_mp3(audio_dir: str):
         results = list(executor.map(check_and_delete, file_paths))
 
     return sum(results)
-
-
-def init(audio_dir: str):
-    threading.Thread(mixer.init()).start()
-    delete_invalid_mp3(audio_dir)
 
 
 def generate(word: str, path: str):

@@ -2,13 +2,11 @@ import os
 
 from clear_screen import clear
 
+if "TERM" not in os.environ:
+    os.environ["TERM"] = "xterm"
+
 
 class Cleaner:
-    @staticmethod
-    def init():
-        if "TERM" not in os.environ:
-            os.environ["TERM"] = "xterm"
-
     def __enter__(self):
         pass
 
