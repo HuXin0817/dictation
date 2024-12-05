@@ -6,9 +6,9 @@ def count_fullwidth_and_halfwidth(input_string: str) -> (int, int):
     halfwidth_count = 0
 
     for char in input_string:
-        if unicodedata.east_asian_width(char) in ["F", "W"]:  # 全角字符
+        if unicodedata.east_asian_width(char) in ["F", "W"]:
             fullwidth_count += 1
-        elif unicodedata.east_asian_width(char) == "H":  # 半角字符
+        elif unicodedata.east_asian_width(char) == "H":
             halfwidth_count += 1
 
     return fullwidth_count, halfwidth_count
