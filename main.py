@@ -13,6 +13,7 @@ import audio
 from align_strings import align_strings
 from beep import beep
 from cleaner import clear
+from play import play
 
 audio_dir = "./audios"
 grade_dir = "./grade"
@@ -123,7 +124,7 @@ def ask_chinese_meaning(entry: Entry) -> bool:
 
 def get_answer(entry: Entry) -> str | None:
     print("> ", end="")
-    audio.play(entry.audio_path)
+    play(entry.audio_path)
 
     answer = input().strip(" \u3000")
     if answer == "":
@@ -151,7 +152,7 @@ def dictation(entry: Entry) -> bool:
         print(f"❌ Incorrect! {entry}")
         retry = ""
         while retry.strip(" \u3000").lower() != entry.english.lower():
-            audio.play(entry.audio_path)
+            play(entry.audio_path)
             retry = input("Try again: ")
         return False
 

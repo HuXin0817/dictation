@@ -5,12 +5,6 @@ from gtts import gTTS as gtts
 from mutagen import MutagenError
 from mutagen.mp3 import MP3
 
-os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide"
-
-from pygame import mixer
-
-mixer.init()
-
 
 def check_and_delete(file_path: str) -> bool:
     try:
@@ -45,8 +39,3 @@ def generate(word: str, path: str) -> bool:
         return False
     print(f'💿 finish generate audio "{word}" to "{path}".')
     return True
-
-
-def play(audio_path: str) -> None:
-    mixer.music.load(audio_path)
-    mixer.music.play()
