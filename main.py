@@ -165,6 +165,7 @@ def dictation(entry: Entry) -> bool:
 
 def get_dictation_file_path() -> str:
     files = natsorted(glob(f"{words_dir}/*.md"))
+    file_entry_count = []
 
     global all_entry_chinese
     for file in files:
@@ -172,6 +173,7 @@ def get_dictation_file_path() -> str:
         for entry in file_entries:
             all_entry_chinese.append(entry.chinese)
         write_entries(file, file_entries)
+        file_entry_count.append(len(file_entries))
     all_entry_chinese = list(set(all_entry_chinese))
 
     print("💿 Start generating audios...")
@@ -195,9 +197,16 @@ def get_dictation_file_path() -> str:
     print(f"✨ Audio generation completed in {timer.elapsed:.2f} seconds.\n")
     print("📖 Dictation files:\n")
 
+    max_length = max(len(file) for file in files) - len(words_dir) - 4
+    max_num_length = len(str(len(files) + 1))
+
     for i, file in enumerate(files, 1):
-        print(f" 💿 {i} {file[len(words_dir) + 1:-3]}")
-    print(f" 💿 {len(files) + 1} REVIEW\n")
+        number = str(i).rjust(max_num_length)
+        file_name = file[len(words_dir) + 1: -3].ljust(max_length)
+        words_number = file_entry_count[i - 1]
+        print(f" 💿 {number} {file_name}  ({words_number} Words)")
+
+    print(f" 💿 {str(len(files) + 1).rjust(max_num_length)} REVIEW\n")
 
     while True:
         user_choice = input("🎵 Please choose a dictation file id: ").strip(" \u3000")
@@ -215,11 +224,14 @@ def get_dictation_file_path() -> str:
 
 
 if __name__ == "__main__":
-    clear()
-
     os.makedirs(words_dir, exist_ok=True)
     os.makedirs(grade_dir, exist_ok=True)
     os.makedirs(audio_dir, exist_ok=True)
+
+    clear()
+    print("\n🎧 Welcome to Dictation App!")
+    print("📘 Practice your English dictation skills with phrases and words.")
+    print("🔊 Make sure your audio is turned on for the best experience.\n")
 
     dictation_file_path = get_dictation_file_path()
     clear()
