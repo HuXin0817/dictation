@@ -73,7 +73,7 @@ def write_entries(file_name: str, entries: list[Entry]) -> None:
             file.write(f"{english_part} {chinese_part}\n\n")
 
 
-def get_choice() -> int:
+def get_choice() -> int | None:
     user_input = input("Your choice: ").strip(" \u3000")
 
     if user_input.isdigit():
@@ -92,7 +92,7 @@ def get_choice() -> int:
             return 3
 
     print("Invalid choice.")
-    return -1
+    return None
 
 
 def ask_chinese_meaning(entry: Entry) -> bool:
@@ -113,7 +113,7 @@ def ask_chinese_meaning(entry: Entry) -> bool:
 
     while True:
         user_choice = get_choice()
-        if user_choice == -1:
+        if user_choice is None:
             continue
 
         return choices[user_choice].strip(" \u3000") == entry.chinese
