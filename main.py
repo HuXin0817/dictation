@@ -208,11 +208,15 @@ def get_dictation_file_path() -> str:
 
 
 if __name__ == "__main__":
+    clear()
+
     os.makedirs(words_dir, exist_ok=True)
     os.makedirs(grade_dir, exist_ok=True)
     os.makedirs(audio_dir, exist_ok=True)
 
     dictation_file_path = get_dictation_file_path()
+    clear()
+
     dictation_file_name = ""
     entries = []
     if dictation_file_path == "REVIEW":
