@@ -1,7 +1,5 @@
-import io
 import os
 from concurrent.futures import ThreadPoolExecutor
-from functools import lru_cache
 
 from gtts import gTTS as gtts
 from mutagen import MutagenError
@@ -49,13 +47,6 @@ def generate(word: str, path: str) -> bool:
     return True
 
 
-@lru_cache(maxsize=64)
-def load_audio_to_memory(audio_path: str) -> io.BytesIO:
-    with open(audio_path, "rb") as audio_file:
-        return io.BytesIO(audio_file.read())
-
-
 def play(audio_path: str) -> None:
-    audio_data = load_audio_to_memory(audio_path)
-    mixer.music.load(audio_data)
+    mixer.music.load(audio_path)
     mixer.music.play()
