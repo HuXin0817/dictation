@@ -11,6 +11,7 @@ from natsort import natsorted
 
 import audio
 from align_strings import align_strings
+from beep import beep
 from cleaner import clear
 
 audio_dir = "./audios"
@@ -92,6 +93,7 @@ def get_choice() -> int | None:
             return 3
 
     print("Invalid choice.")
+    beep()
     return None
 
 
@@ -125,6 +127,7 @@ def get_answer(entry: Entry) -> str:
 
     answer = input().strip(" \u3000")
     if answer == "":
+        beep()
         return ""
 
     answer_is_phrase = answer.count(" ") > 0
@@ -133,6 +136,7 @@ def get_answer(entry: Entry) -> str:
             print("⚠️ This entry is phrase!")
         else:
             print("⚠️ This entry is a word!")
+        beep()
         return ""
 
     return answer
@@ -200,11 +204,14 @@ def get_dictation_file_path() -> str:
         try:
             file_index = int(user_choice)
         except ValueError:
+            beep()
             continue
         if 0 < file_index <= len(files):
             return files[file_index - 1]
         elif file_index == len(files) + 1:
             return "REVIEW"
+        else:
+            beep()
 
 
 if __name__ == "__main__":
