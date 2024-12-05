@@ -97,10 +97,10 @@ def get_choice() -> int:
 
 def ask_chinese_meaning(entry: Entry) -> bool:
     choices = [entry.chinese]
-    k = 0
-    while len(choices) < min(4, len(all_entry_chinese)):
+
+    choices_len = min(4, len(all_entry_chinese))
+    while len(choices) < choices_len:
         random_entry = random.choice(all_entry_chinese)
-        k += 1
         if random_entry not in choices:
             choices.append(random_entry)
 
@@ -202,7 +202,6 @@ def get_dictation_file_path() -> str:
         except ValueError:
             continue
         if 0 < file_index <= len(files):
-            print()
             return files[file_index - 1]
         elif file_index == len(files) + 1:
             return "REVIEW"
@@ -265,7 +264,7 @@ if __name__ == "__main__":
                         file.write(f"✅ {entry_str} (dictated {count} times)\n\n")
 
         if len(wrong_entries) == 0:
-            print("\nDictation finished! 🎉")
+            print("\nDictation finished! 🎉\n")
             subprocess.run(["open", grade_dir])
             break
 
