@@ -1,9 +1,30 @@
 import os
+import sys
 from concurrent.futures import ThreadPoolExecutor
 
 from gtts import gTTS as gtts
 from mutagen import MutagenError
 from mutagen.mp3 import MP3
+from PyQt5.QtWidgets import QApplication
+
+os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide"
+
+from pygame import mixer
+from pygame.mixer import music
+
+app = QApplication(sys.argv)
+
+if not mixer.get_init():
+    mixer.init()
+
+
+def play(audio_path: str) -> None:
+    music.load(audio_path)
+    music.play()
+
+
+def beep():
+    app.beep()
 
 
 def check_and_delete(file_path: str) -> bool:

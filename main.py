@@ -11,9 +11,7 @@ from natsort import natsorted
 
 import audio
 from align_strings import align_strings
-from beep import beep
 from cleaner import clear
-from play import play
 
 audio_dir = "./audios"
 grade_dir = "./grade"
@@ -94,7 +92,7 @@ def get_choice() -> int | None:
             return 3
 
     print("Invalid choice.")
-    beep()
+    audio.beep()
     return None
 
 
@@ -124,11 +122,11 @@ def ask_chinese_meaning(entry: Entry) -> bool:
 
 def get_answer(entry: Entry) -> str | None:
     print("> ", end="")
-    play(entry.audio_path)
+    audio.play(entry.audio_path)
 
     answer = input().strip(" \u3000")
     if answer == "":
-        beep()
+        audio.beep()
         return None
 
     answer_is_phrase = answer.count(" ") > 0
@@ -137,7 +135,7 @@ def get_answer(entry: Entry) -> str | None:
             print("⚠️ This entry is phrase!")
         else:
             print("⚠️ This entry is a word!")
-        beep()
+        audio.beep()
         return None
 
     return answer
@@ -152,7 +150,7 @@ def dictation(entry: Entry) -> bool:
         print(f"❌ Incorrect! {entry}")
         retry = ""
         while retry.strip(" \u3000").lower() != entry.english.lower():
-            play(entry.audio_path)
+            audio.play(entry.audio_path)
             retry = input("Try again: ")
         return False
 
@@ -214,14 +212,14 @@ def get_dictation_file_path() -> str:
         try:
             file_index = int(user_choice)
         except ValueError:
-            beep()
+            audio.beep()
             continue
         if 0 < file_index <= len(files):
             return files[file_index - 1]
         elif file_index == len(files) + 1:
             return "REVIEW"
         else:
-            beep()
+            audio.beep()
 
 
 if __name__ == "__main__":
