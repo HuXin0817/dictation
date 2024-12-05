@@ -5,5 +5,5 @@ from PyQt5.QtWidgets import QApplication
 app = QApplication(sys.argv)
 
 
-def beep() -> None:
+def beep():
     app.beep()

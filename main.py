@@ -202,7 +202,7 @@ def get_dictation_file_path() -> str:
 
     for i, file in enumerate(files, 1):
         number = str(i).rjust(max_num_length)
-        file_name = file[len(words_dir) + 1: -3].ljust(max_length)
+        file_name = file[len(words_dir) + 1 : -3].ljust(max_length)
         words_number = file_entry_count[i - 1]
         print(f" 💿 {number} {file_name}  ({words_number} Words)")
 
@@ -247,7 +247,7 @@ if __name__ == "__main__":
         random.shuffle(entries)
         entries = entries[:30]
     else:
-        dictation_file_name = dictation_file_path[len(words_dir) + 1: -3]
+        dictation_file_name = dictation_file_path[len(words_dir) + 1 : -3]
         entries = load_entries(dictation_file_path)
         random.shuffle(entries)
 
