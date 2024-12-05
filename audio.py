@@ -49,7 +49,7 @@ def generate(word: str, path: str) -> bool:
     return True
 
 
-@lru_cache(maxsize=60)
+@lru_cache(maxsize=64)
 def load_audio_to_memory(audio_path: str) -> io.BytesIO:
     with open(audio_path, "rb") as audio_file:
         return io.BytesIO(audio_file.read())
