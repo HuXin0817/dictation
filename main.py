@@ -121,14 +121,14 @@ def ask_chinese_meaning(entry: Entry) -> bool:
         return choices[user_choice].strip(" \u3000") == entry.chinese
 
 
-def get_answer(entry: Entry) -> str:
+def get_answer(entry: Entry) -> str | None:
     print("> ", end="")
     audio.play(entry.audio_path)
 
     answer = input().strip(" \u3000")
     if answer == "":
         beep()
-        return ""
+        return None
 
     answer_is_phrase = answer.count(" ") > 0
     if answer_is_phrase != entry.is_phrase:
@@ -137,14 +137,14 @@ def get_answer(entry: Entry) -> str:
         else:
             print("⚠️ This entry is a word!")
         beep()
-        return ""
+        return None
 
     return answer
 
 
 def dictation(entry: Entry) -> bool:
-    answer = ""
-    while answer == "":
+    answer = None
+    while answer is None:
         answer = get_answer(entry)
 
     if answer.lower() != entry.english.lower():
@@ -235,7 +235,7 @@ if __name__ == "__main__":
         random.shuffle(entries)
         entries = entries[:30]
     else:
-        dictation_file_name = dictation_file_path[len(words_dir) + 1 : -3]
+        dictation_file_name = dictation_file_path[len(words_dir) + 1: -3]
         entries = load_entries(dictation_file_path)
         random.shuffle(entries)
 
