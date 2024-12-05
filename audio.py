@@ -4,6 +4,9 @@ from concurrent.futures import ThreadPoolExecutor
 from gtts import gTTS as gtts
 from mutagen import MutagenError
 from mutagen.mp3 import MP3
+
+os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide"
+
 from pygame import mixer
 
 mixer.init()
