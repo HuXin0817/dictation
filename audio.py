@@ -56,6 +56,6 @@ def load_audio_to_memory(audio_path: str) -> io.BytesIO:
 
 
 def play(audio_path: str) -> None:
-    audio_data = load_audio_to_memory(audio_path)  # 缓存加载
-    mixer.music.load(audio_data)  # 从缓存加载音频
+    audio_data = load_audio_to_memory(audio_path)
+    mixer.music.load(audio_data)
     mixer.music.play()
