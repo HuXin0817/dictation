@@ -4,25 +4,33 @@ import subprocess
 import threading
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
+from enum import Enum
 from functools import lru_cache
 from glob import glob
 
+import Levenshtein
+from clear_screen import clear
 from contexttimer import Timer
 from natsort import natsorted
 
 import audio
-import fmt_chinese
 from align_strings import align_strings
-from answer_type import AnswerType
-from cleaner import clear
-from compare_answer import compare_answer
 from semantic_similarity import load_embedding, semantic_similarity
+
+if "TERM" not in os.environ:
+    os.environ["TERM"] = "xterm"
 
 audio_dir = "./audios"
 grade_dir = "./grade"
 words_dir = "./words"
 
 all_entry_chinese = []
+
+
+class AnswerType(Enum):
+    RIGHT = 0
+    WRONG = 1
+    NOT_EXIST = 2
 
 
 class Entry:
@@ -41,7 +49,9 @@ class Entry:
 
         self.english = self.english.strip(" ")
         self.chinese = self.chinese.strip("，")
-        self.chinese = fmt_chinese.fmt(self.chinese)
+        rule = [",", "/", ";", "；", "。", " ", "\u3000"]
+        for i in rule:
+            self.chinese = self.chinese.replace(i, "，")
         self.is_phrase = self.english.count(" ") > 0
         self.audio_path = os.path.join(audio_dir, f"{self.english}.mp3")
 
@@ -179,6 +189,18 @@ def get_answer(entry: Entry) -> str | None:
         return None
 
     return answer
+
+
+def compare_answer(user_answer, answer) -> bool:
+    user_answer = " ".join(user_answer.strip(" \u3000").lower().split())
+    answer = " ".join(answer.strip(" \u3000").lower().split())
+
+    right = user_answer == answer
+    e = "✅" if right else "❌"
+    similarity = Levenshtein.ratio(user_answer, answer) * 100
+
+    print(f"{e} | {answer} | {user_answer} | {similarity:.2f}%")
+    return right
 
 
 def dictation(entry: Entry) -> bool:
