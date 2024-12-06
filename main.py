@@ -117,8 +117,7 @@ def ask_chinese_meaning(entry: Entry, choice_e: bool) -> AnswerType:
     if answer_exist:
         choices.append(entry.chinese)
 
-    choices_len = min(4, len(all_entry_chinese))
-    while len(choices) < choices_len:
+    while len(choices) < 4:
         random_chinese = random.choice(all_entry_chinese)
         if random_chinese not in choices:
             choices.append(random_chinese)
@@ -126,22 +125,29 @@ def ask_chinese_meaning(entry: Entry, choice_e: bool) -> AnswerType:
     random.shuffle(choices)
     choices[0], choices[2] = align_strings(choices[0], choices[2])
 
-    print("🌐 Please choose the correct Chinese translation:")
+    print(f'🌐 Word "{entry.english}" Chinese translation:')
     print("   A. " + choices[0] + "   B. " + choices[1])
     print("   C. " + choices[2] + "   D. " + choices[3])
     if choice_e:
         print("   E. answer not exist.")
+
+    right_answer = 5
+    for i in range(4):
+        if choices[i].strip(" \u3000") == entry.chinese:
+            right_answer = i + 1
 
     while True:
         user_choice = get_choice(5 if choice_e else 4)
         if user_choice is None:
             continue
 
-        if not answer_exist:
-            return AnswerType.NOT_EXIST if user_choice == 5 else AnswerType.WRONG
-
-        user_answer = choices[user_choice - 1].strip(" \u3000")
-        return AnswerType.RIGHT if user_answer == entry.chinese else AnswerType.WRONG
+        if user_choice == right_answer:
+            if user_choice == 5:
+                return AnswerType.NOT_EXIST
+            else:
+                return AnswerType.RIGHT
+        else:
+            return AnswerType.WRONG
 
 
 def get_answer(entry: Entry) -> str | None:
@@ -198,6 +204,7 @@ def get_dictation_file_path() -> str:
         write_entries(file, file_entries)
         file_entry_count.append(len(file_entries))
     all_entry_chinese = list(set(all_entry_chinese))
+    assert len(all_entry_chinese) >= 4
 
     print("💿 Start generating audios...")
     with Timer() as timer:
