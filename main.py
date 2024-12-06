@@ -13,6 +13,7 @@ import audio
 from align_strings import align_strings
 from answer_type import AnswerType
 from cleaner import clear
+from compare_answer import compare_answer
 
 audio_dir = "./audios"
 grade_dir = "./grade"
@@ -176,13 +177,13 @@ def dictation(entry: Entry) -> bool:
     while user_answer is None:
         user_answer = get_answer(entry)
 
-    if user_answer.lower() != entry.english.lower():
-        retry = ""
-        while retry.strip(" \u3000").lower() != entry.english.lower():
+    if not compare_answer(user_answer, entry.english):
+        while True:
             audio.play(entry.audio_path)
-            entry.judge(AnswerType.WRONG)
-            retry = input("Try again: ")
-        return False
+            retry = input("Try again: ").strip(" \u3000")
+            if retry != "":
+                if compare_answer(retry, entry.english):
+                    return False
 
     chinese_meaning_answer = ask_chinese_meaning(entry, choice_e=True)
     if chinese_meaning_answer == AnswerType.NOT_EXIST:
