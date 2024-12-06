@@ -15,7 +15,6 @@ def compare_answer(user_answer, answer) -> bool:
     answer_chars = list(answer)
 
     user_visual = []
-    answer_visual = []
 
     user_index, answer_index = 0, 0
     for op, i, j in operations:
@@ -26,32 +25,26 @@ def compare_answer(user_answer, answer) -> bool:
                 and user_chars[user_index] == answer_chars[answer_index]
             ):
                 user_visual.append(user_chars[user_index])
-                answer_visual.append(answer_chars[answer_index])
                 user_index += 1
                 answer_index += 1
             elif user_index < i:
                 user_visual.append(colored(user_chars[user_index], "red"))
                 user_index += 1
             elif answer_index < j:
-                answer_visual.append(colored(answer_chars[answer_index], "green"))
                 answer_index += 1
 
         if op == "replace":
             user_visual.append(colored(user_chars[i], "yellow"))
-            answer_visual.append(colored(answer_chars[j], "yellow"))
             user_index += 1
             answer_index += 1
         elif op == "insert":
-            answer_visual.append(colored(answer_chars[j], "green"))
             answer_index += 1
         elif op == "delete":
             user_visual.append(colored(user_chars[i], "red"))
             user_index += 1
 
     user_visual.extend(user_chars[user_index:])
-    answer_visual.extend(answer_chars[answer_index:])
 
     user_visual_str = "".join(user_visual)
-    answer_visual_str = "".join(answer_visual)
-    print(f"{e} | {answer_visual_str} | {user_visual_str} | {similarity:.2f}%")
+    print(f"{e} | {answer} | {user_visual_str} | {similarity:.2f}%")
     return is_correct
