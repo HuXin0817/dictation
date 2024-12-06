@@ -43,6 +43,16 @@ class Entry:
     def __str__(self):
         return self.english + " " + self.chinese
 
+    def judge(self, a: AnswerType) -> bool | None:
+        if a == AnswerType.RIGHT:
+            print(f"✅ Correct! {self}")
+            return True
+        elif a == AnswerType.WRONG:
+            print(f"❌ Incorrect! {self}")
+            return False
+
+        return None
+
 
 @lru_cache(maxsize=None)
 def load_entries(file_name: str) -> list[Entry]:
@@ -161,28 +171,19 @@ def dictation(entry: Entry) -> bool:
         user_answer = get_answer(entry)
 
     if user_answer.lower() != entry.english.lower():
-        print(f"❌ Incorrect! {entry}")
         retry = ""
         while retry.strip(" \u3000").lower() != entry.english.lower():
             audio.play(entry.audio_path)
+            entry.judge(AnswerType.WRONG)
             retry = input("Try again: ")
         return False
 
     chinese_meaning_answer = ask_chinese_meaning(entry, choice_e=True)
-    if chinese_meaning_answer == AnswerType.RIGHT:
-        print(f"✅ Correct! {entry}")
-        return True
-    elif chinese_meaning_answer == AnswerType.WRONG:
-        print(f"❌ Incorrect! {entry}")
-        return False
-    else:
+    if chinese_meaning_answer == AnswerType.NOT_EXIST:
         chinese_meaning_answer_again = ask_chinese_meaning(entry, choice_e=False)
-        if chinese_meaning_answer_again == AnswerType.RIGHT:
-            print(f"✅ Correct! {entry}")
-            return True
-        elif chinese_meaning_answer_again == AnswerType.WRONG:
-            print(f"❌ Incorrect! {entry}")
-            return False
+        return entry.judge(chinese_meaning_answer_again)
+    else:
+        return entry.judge(chinese_meaning_answer)
 
 
 def get_dictation_file_path() -> str:
