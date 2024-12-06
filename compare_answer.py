@@ -55,6 +55,3 @@ def compare_answer(user_answer, answer) -> bool:
     answer_visual_str = "".join(answer_visual)
     print(f"{e} | {answer_visual_str} | {user_visual_str} | {similarity:.2f}%")
     return is_correct
-
-
-compare_answer("This is a incorrect answer", "is the correct answer 123")
