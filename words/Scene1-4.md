@@ -14,7 +14,7 @@ cloakroom                     衣帽间
 
 contact                       联系方式
 
-cooker                        厨灶/炉具
+cooker                        厨灶，炉具
 
 cupboard                      碗柜
 

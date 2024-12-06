@@ -20,7 +20,7 @@ landlady                     女房东
 
 landlord                     房东
 
-lane                         小路/小巷
+lane                         小路，小巷
 
 location                     位置
 

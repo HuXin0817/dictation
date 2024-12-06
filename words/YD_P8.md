@@ -26,9 +26,9 @@ interrupt      中断，打断
 
 involve        包含，涉及
 
-isolate        隔离，孤立/隔离的，孤立的
+isolate        隔离，孤立，隔离的，孤立的
 
-label          标注，贴标签于/标签
+label          标注，贴标签于，标签
 
 lack           缺乏，不足
 

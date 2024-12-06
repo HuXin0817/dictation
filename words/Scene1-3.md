@@ -1,4 +1,4 @@
-agency                 房屋代理人/公司
+agency                 房屋代理人，公司
 
 apartment              公寓
 
@@ -26,7 +26,7 @@ facilities             房屋设施
 
 favor                  口味
 
-foyer                  休息室/门厅
+foyer                  休息室，门厅
 
 garage                 车库
 
@@ -60,7 +60,7 @@ weekly                 周付
 
 workdays               周一至五
 
-yard                   院子/庭院
+yard                   院子，庭院
 
 be allergic to         对...过敏
 

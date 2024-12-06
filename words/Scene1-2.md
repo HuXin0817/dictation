@@ -14,7 +14,7 @@ contract              合同
 
 corridor              走廊
 
-fence                 栅栏/围栏
+fence                 栅栏，围栏
 
 Flashlight            电简
 
@@ -40,7 +40,7 @@ pipe                  管子
 
 shower                淋浴
 
-sink                  洗涤池/洗碗槽
+sink                  洗涤池，洗碗槽
 
 stove                 炉灶
 
@@ -62,9 +62,9 @@ host family           寄宿家庭
 
 house agency          房产中介
 
-house agent           房屋代理人/公司
+house agent           房屋代理人，公司
 
-living room           起居室/客厅
+living room           起居室，客厅
 
 maximum rent          最高租金
 

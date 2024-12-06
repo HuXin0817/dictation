@@ -1,6 +1,7 @@
 import os
 import random
 import subprocess
+import threading
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from functools import lru_cache
@@ -10,10 +11,12 @@ from contexttimer import Timer
 from natsort import natsorted
 
 import audio
+import fmt_chinese
 from align_strings import align_strings
 from answer_type import AnswerType
 from cleaner import clear
 from compare_answer import compare_answer
+from semantic_similarity import load_embedding, semantic_similarity
 
 audio_dir = "./audios"
 grade_dir = "./grade"
@@ -34,10 +37,11 @@ class Entry:
             if word.isascii():
                 self.english += word + " "
             else:
-                self.chinese += word + " "
+                self.chinese += word + "，"
 
-        self.english = self.english.strip(" \u3000")
-        self.chinese = self.chinese.strip(" \u3000")
+        self.english = self.english.strip(" ")
+        self.chinese = self.chinese.strip("，")
+        self.chinese = fmt_chinese.fmt(self.chinese)
         self.is_phrase = self.english.count(" ") > 0
         self.audio_path = os.path.join(audio_dir, f"{self.english}.mp3")
 
@@ -114,13 +118,18 @@ def get_choice(choice_number: int) -> int | None:
 def ask_chinese_meaning(entry: Entry, choice_e: bool) -> AnswerType:
     choices = []
 
-    answer_exist = random.choice([True, False]) if choice_e else True
+    answer_exist = random.choice([True, True, False]) if choice_e else True
     if answer_exist:
         choices.append(entry.chinese)
 
     while len(choices) < 4:
         random_chinese = random.choice(all_entry_chinese)
-        if random_chinese not in choices:
+        if random_chinese == entry.chinese:
+            continue
+        if random_chinese in choices:
+            continue
+        similarity = semantic_similarity(random_chinese, entry.chinese)
+        if similarity < 0.9:
             choices.append(random_chinese)
 
     random.shuffle(choices)
@@ -193,6 +202,11 @@ def dictation(entry: Entry) -> bool:
         return entry.judge(chinese_meaning_answer)
 
 
+def load_all_chinese_embedding():
+    with ThreadPoolExecutor(max_workers=32) as executor:
+        executor.map(load_embedding, all_entry_chinese)
+
+
 def get_dictation_file_path() -> str:
     files = natsorted(glob(f"{words_dir}/*.md"))
     file_entry_count = []
@@ -206,6 +220,7 @@ def get_dictation_file_path() -> str:
         file_entry_count.append(len(file_entries))
     all_entry_chinese = list(set(all_entry_chinese))
     assert len(all_entry_chinese) >= 4
+    threading.Thread(target=load_all_chinese_embedding).start()
 
     print("💿 Start generating audios...")
     with Timer() as timer:

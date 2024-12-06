@@ -30,7 +30,7 @@ religious    宗教的，虔诚的
 
 reluctant    不愿的，勉强的
 
-remain       保持，依然/遗迹，残骸
+remain       保持，依然，遗迹，残骸
 
 rudimentary  基本的，退化的
 
