@@ -8,13 +8,13 @@ from enum import Enum
 from functools import lru_cache
 from glob import glob
 
-import Levenshtein
 from clear_screen import clear
 from contexttimer import Timer
 from natsort import natsorted
 
 import audio
 from align_strings import align_strings
+from compare_answer import compare_answer
 from semantic_similarity import load_embedding, semantic_similarity
 
 if "TERM" not in os.environ:
@@ -189,18 +189,6 @@ def get_answer(entry: Entry) -> str | None:
         return None
 
     return answer
-
-
-def compare_answer(user_answer, answer) -> bool:
-    user_answer = " ".join(user_answer.strip(" \u3000").lower().split())
-    answer = " ".join(answer.strip(" \u3000").lower().split())
-
-    right = user_answer == answer
-    e = "✅" if right else "❌"
-    similarity = Levenshtein.ratio(user_answer, answer) * 100
-
-    print(f"{e} | {answer} | {user_answer} | {similarity:.2f}%")
-    return right
 
 
 def dictation(entry: Entry) -> bool:
