@@ -11,6 +11,7 @@ from natsort import natsorted
 
 import audio
 from align_strings import align_strings
+from answer_type import AnswerType
 from cleaner import clear
 
 audio_dir = "./audios"
@@ -73,37 +74,44 @@ def write_entries(file_name: str, entries: list[Entry]) -> None:
             file.write(f"{english_part} {chinese_part}\n\n")
 
 
-def get_choice() -> int | None:
+def get_choice(choice_number: int) -> int | None:
+    assert choice_number == 4 or choice_number == 5
+
     user_input = input("Your choice: ").strip(" \u3000")
 
     if user_input.isdigit():
         user_choice = int(user_input)
-        if 1 <= user_choice <= 4:
-            return user_choice - 1
+        if 1 <= user_choice <= choice_number:
+            return user_choice
     else:
         user_input = user_input.upper()
         if user_input == "A":
-            return 0
-        elif user_input == "B":
             return 1
-        elif user_input == "C":
+        elif user_input == "B":
             return 2
-        elif user_input == "D":
+        elif user_input == "C":
             return 3
+        elif user_input == "D":
+            return 4
+        elif user_input == "E" and choice_number == 5:
+            return 5
 
-    print("Invalid choice.")
     audio.beep()
     return None
 
 
-def ask_chinese_meaning(entry: Entry) -> bool:
-    choices = [entry.chinese]
+def ask_chinese_meaning(entry: Entry, choice_e: bool) -> AnswerType:
+    choices = []
+
+    answer_exist = random.choice([True, False]) if choice_e else True
+    if answer_exist:
+        choices.append(entry.chinese)
 
     choices_len = min(4, len(all_entry_chinese))
     while len(choices) < choices_len:
-        random_entry = random.choice(all_entry_chinese)
-        if random_entry not in choices:
-            choices.append(random_entry)
+        random_chinese = random.choice(all_entry_chinese)
+        if random_chinese not in choices:
+            choices.append(random_chinese)
 
     random.shuffle(choices)
     choices[0], choices[2] = align_strings(choices[0], choices[2])
@@ -111,13 +119,19 @@ def ask_chinese_meaning(entry: Entry) -> bool:
     print("🌐 Please choose the correct Chinese translation:")
     print("   A. " + choices[0] + "   B. " + choices[1])
     print("   C. " + choices[2] + "   D. " + choices[3])
+    if choice_e:
+        print("   E. answer not exist.")
 
     while True:
-        user_choice = get_choice()
+        user_choice = get_choice(5 if choice_e else 4)
         if user_choice is None:
             continue
 
-        return choices[user_choice].strip(" \u3000") == entry.chinese
+        if not answer_exist:
+            return AnswerType.NOT_EXIST if user_choice == 5 else AnswerType.WRONG
+
+        user_answer = choices[user_choice - 1].strip(" \u3000")
+        return AnswerType.RIGHT if user_answer == entry.chinese else AnswerType.WRONG
 
 
 def get_answer(entry: Entry) -> str | None:
@@ -142,11 +156,11 @@ def get_answer(entry: Entry) -> str | None:
 
 
 def dictation(entry: Entry) -> bool:
-    answer = None
-    while answer is None:
-        answer = get_answer(entry)
+    user_answer = None
+    while user_answer is None:
+        user_answer = get_answer(entry)
 
-    if answer.lower() != entry.english.lower():
+    if user_answer.lower() != entry.english.lower():
         print(f"❌ Incorrect! {entry}")
         retry = ""
         while retry.strip(" \u3000").lower() != entry.english.lower():
@@ -154,12 +168,21 @@ def dictation(entry: Entry) -> bool:
             retry = input("Try again: ")
         return False
 
-    if not ask_chinese_meaning(entry):
+    chinese_meaning_answer = ask_chinese_meaning(entry, choice_e=True)
+    if chinese_meaning_answer == AnswerType.RIGHT:
+        print(f"✅ Correct! {entry}")
+        return True
+    elif chinese_meaning_answer == AnswerType.WRONG:
         print(f"❌ Incorrect! {entry}")
         return False
-
-    print(f"✅ Correct! {entry}")
-    return True
+    else:
+        chinese_meaning_answer_again = ask_chinese_meaning(entry, choice_e=False)
+        if chinese_meaning_answer_again == AnswerType.RIGHT:
+            print(f"✅ Correct! {entry}")
+            return True
+        elif chinese_meaning_answer_again == AnswerType.WRONG:
+            print(f"❌ Incorrect! {entry}")
+            return False
 
 
 def get_dictation_file_path() -> str:
