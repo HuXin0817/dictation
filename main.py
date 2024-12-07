@@ -58,16 +58,6 @@ class Entry:
     def __str__(self):
         return self.english + " " + self.chinese
 
-    def judge(self, a: AnswerType) -> bool | None:
-        if a == AnswerType.RIGHT:
-            print(f"✅ Correct! {self}")
-            return True
-        elif a == AnswerType.WRONG:
-            print(f"❌ Incorrect! {self}")
-            return False
-
-        return None
-
 
 @lru_cache(maxsize=None)
 def load_entries(file_name: str) -> list[Entry]:
@@ -207,9 +197,9 @@ def dictation(entry: Entry) -> bool:
     chinese_meaning_answer = ask_chinese_meaning(entry, choice_e=True)
     if chinese_meaning_answer == AnswerType.NOT_EXIST:
         chinese_meaning_answer_again = ask_chinese_meaning(entry, choice_e=False)
-        return entry.judge(chinese_meaning_answer_again)
+        return chinese_meaning_answer_again == AnswerType.RIGHT
     else:
-        return entry.judge(chinese_meaning_answer)
+        return chinese_meaning_answer == AnswerType.RIGHT
 
 
 def load_all_chinese_embedding():
@@ -301,7 +291,7 @@ if __name__ == "__main__":
             entries += file_entries
         dictation_file_name = "REVIEW"
         random.shuffle(entries)
-        entries = entries[:30]
+        entries = entries[:20]
     else:
         dictation_file_name = dictation_file_path[len(words_dir) + 1 : -3]
         entries = load_entries(dictation_file_path)
@@ -335,7 +325,6 @@ if __name__ == "__main__":
                 dictation_count[entry_str] += 1
 
             answer_is_right = dictation(entry)
-            clear()
 
             if not answer_is_right:
                 wrong_entries.append(entry)
@@ -344,6 +333,10 @@ if __name__ == "__main__":
             with open(result_file_path, "w", encoding="utf-8") as file:
                 for entry_str, count in dictation_count.items():
                     file.write(f"✅ {entry_str} (dictated {count} times)\n\n")
+
+            print(f"\n📖 {entry}")
+            input("type a word to continue.")
+            clear()
 
         if len(wrong_entries) == 0:
             print("\nDictation finished! 🎉\n")
