@@ -4,10 +4,8 @@ import torch
 from scipy.spatial.distance import cosine
 from transformers import BertModel, BertTokenizer
 
-print("🚀 Loading BERT model...")
 tokenizer = BertTokenizer.from_pretrained("bert-base-chinese")
 model = BertModel.from_pretrained("bert-base-chinese")
-print("🎉 BERT model and tokenizer are ready!")
 
 cache = {}
 cache_lock = threading.Lock()

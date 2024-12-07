@@ -1,3 +1,7 @@
+print("\n🎧 Welcome to Dictation App!")
+print("📘 Practice your English dictation skills with phrases and words.")
+print("🔊 Make sure your audio is turned on for the best experience.\n")
+
 import os
 import random
 import subprocess
@@ -15,10 +19,12 @@ from natsort import natsorted
 import audio
 from align_strings import align_strings
 from compare_answer import compare_answer
+from get_pos import get_pos
 from semantic_similarity import load_embedding, semantic_similarity
 
-if "TERM" not in os.environ:
-    os.environ["TERM"] = "xterm"
+clear_is_valid = "TERM" in os.environ
+if not clear_is_valid:
+    clear = lambda: None
 
 audio_dir = "./audios"
 grade_dir = "./grade"
@@ -56,7 +62,7 @@ class Entry:
         self.audio_path = os.path.join(audio_dir, f"{self.english}.mp3")
 
     def __str__(self):
-        return self.english + " " + self.chinese
+        return self.english + " " + get_pos(self.english) + " " + self.chinese
 
 
 @lru_cache(maxsize=None)
@@ -274,13 +280,7 @@ if __name__ == "__main__":
     os.makedirs(grade_dir, exist_ok=True)
     os.makedirs(audio_dir, exist_ok=True)
 
-    clear()
-    print("\n🎧 Welcome to Dictation App!")
-    print("📘 Practice your English dictation skills with phrases and words.")
-    print("🔊 Make sure your audio is turned on for the best experience.\n")
-
     dictation_file_path = get_dictation_file_path()
-    clear()
 
     dictation_file_name = ""
     entries = []
@@ -301,6 +301,7 @@ if __name__ == "__main__":
     result_file_name = f"{dictation_file_name}_{time}_grade.txt"
     result_file_path = os.path.join(grade_dir, result_file_name)
 
+    clear()
     print(f'\n🎧 Start dictation for "{dictation_file_name}".')
 
     word_number = len(entries)
@@ -334,8 +335,9 @@ if __name__ == "__main__":
                 for entry_str, count in dictation_count.items():
                     file.write(f"✅ {entry_str} (dictated {count} times)\n\n")
 
-            print(f"\n📖 {entry}")
-            input("type a word to continue.")
+            print(f"📖 {entry}")
+            if not answer_is_right:
+                input("type a word to continue.")
             clear()
 
         if len(wrong_entries) == 0:
