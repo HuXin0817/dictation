@@ -1,7 +1,3 @@
-print("\n🎧 Welcome to Dictation App!")
-print("📘 Practice your English dictation skills with phrases and words.")
-print("🔊 Make sure your audio is turned on for the best experience.\n")
-
 import os
 import random
 import subprocess
@@ -9,7 +5,6 @@ import threading
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from enum import Enum
-from functools import lru_cache
 from glob import glob
 
 from clear_screen import clear
@@ -18,9 +13,16 @@ from natsort import natsorted
 
 import audio
 from align_strings import align_strings
+from cache import cache
 from compare_answer import compare_answer
 from get_pos import get_pos
 from semantic_similarity import load_embedding, semantic_similarity
+
+info = """
+🎧 Welcome to Dictation App!"
+📘 Practice your English dictation skills with phrases and words.
+🔊 Make sure your audio is turned on for the best experience.
+"""
 
 clear_is_valid = "TERM" in os.environ
 if not clear_is_valid:
@@ -65,7 +67,7 @@ class Entry:
         return self.english + " " + get_pos(self.english) + " " + self.chinese
 
 
-@lru_cache(maxsize=None)
+@cache
 def load_entries(file_name: str) -> list[Entry]:
     with open(file_name, "r", encoding="utf-8") as file:
         lines = file.read().splitlines()
@@ -280,6 +282,8 @@ if __name__ == "__main__":
     os.makedirs(grade_dir, exist_ok=True)
     os.makedirs(audio_dir, exist_ok=True)
 
+    print(info)
+
     dictation_file_path = get_dictation_file_path()
 
     dictation_file_name = ""
@@ -341,7 +345,8 @@ if __name__ == "__main__":
             clear()
 
         if len(wrong_entries) == 0:
-            print("\nDictation finished! 🎉\n")
+            print("\nDictation finished! 🎉")
+            clear()
             subprocess.run(["open", grade_dir])
             break
 

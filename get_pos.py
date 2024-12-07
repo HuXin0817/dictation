@@ -1,7 +1,7 @@
-import threading
-
 import nltk
 from nltk import pos_tag
+
+from cache import cache
 
 nltk.download("averaged_perceptron_tagger", quiet=True)
 nltk.download("averaged_perceptron_tagger_eng", quiet=True)
@@ -23,19 +23,14 @@ POS_MAPPING = {
     "RBS": "adv.",
 }
 
-cache = {}
-cache_lock = threading.Lock()
 
-
+@cache
 def get_pos(word: str) -> str:
-    if word not in cache:
-        tagged = pos_tag([word])
+    tagged = pos_tag([word])
 
-        pos = ""
-        for pos_tagged in tagged:
-            if POS_MAPPING.get(pos_tagged[1], None) is not None:
-                pos += POS_MAPPING[pos_tagged[1]] + ", "
+    pos = ""
+    for pos_tagged in tagged:
+        if POS_MAPPING.get(pos_tagged[1], None) is not None:
+            pos += POS_MAPPING[pos_tagged[1]] + ", "
 
-        cache[word] = pos.strip(", ")
-
-    return cache[word]
+    return pos.strip(", ")
