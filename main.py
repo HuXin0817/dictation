@@ -130,7 +130,9 @@ def ask_chinese_meaning(entry: Entry, choice_e: bool) -> AnswerType:
     if answer_exist:
         choices.append(entry.chinese)
 
-    while len(choices) < 4:
+    k = 0
+    while len(choices) < 4 and k < 10000:
+        k += 1
         random_chinese = random.choice(all_entry_chinese)
         if random_chinese == entry.chinese:
             continue
@@ -139,6 +141,9 @@ def ask_chinese_meaning(entry: Entry, choice_e: bool) -> AnswerType:
         similarity = semantic_similarity(random_chinese, entry.chinese)
         if similarity < 0.9:
             choices.append(random_chinese)
+
+    while len(choices) < 4:
+        choices.append("")
 
     random.shuffle(choices)
     choices[0], choices[2] = align_strings(choices[0], choices[2])
