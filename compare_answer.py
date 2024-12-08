@@ -49,5 +49,5 @@ def compare_answer(user_answer, answer) -> bool:
     user_visual_str = "".join(user_visual)
     if not is_correct:
         user_answer += "=> " + user_visual_str
-    print(f"{e} | {answer} | {user_answer} | {similarity:.3f}%")
+    print(f"{e} | {answer} | {user_answer} | {similarity:.2f}%")
     return is_correct
