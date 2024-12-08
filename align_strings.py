@@ -1,6 +1,9 @@
 import unicodedata
 
+from cache import cache
 
+
+@cache
 def count_fullwidth_and_halfwidth(input_string: str) -> (int, int):
     fullwidth_count = 0
     halfwidth_count = 0
