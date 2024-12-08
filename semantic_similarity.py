@@ -18,7 +18,15 @@ def load_embedding(word):
 
 
 def semantic_similarity(word1, word2):
-    embedding1 = load_embedding(word1)
-    embedding2 = load_embedding(word2)
+    word1_splits = word1.split("，")
+    word2_splits = word2.split("，")
 
-    return 1 - cosine(embedding1, embedding2)
+    max_similarity = 0.0
+    for w1 in word1_splits:
+        for w2 in word2_splits:
+            embedding1 = load_embedding(w1)
+            embedding2 = load_embedding(w2)
+            similarity = 1 - cosine(embedding1, embedding2)
+            max_similarity = max(similarity, max_similarity)
+
+    return max_similarity

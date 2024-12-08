@@ -211,8 +211,11 @@ def dictation(entry: Entry) -> bool:
 
 
 def load_all_chinese_embedding():
+    split_words = []
+    for w in all_entry_chinese:
+        split_words.append(w.split("，"))
     with ThreadPoolExecutor(max_workers=32) as executor:
-        executor.map(load_embedding, all_entry_chinese)
+        executor.map(load_embedding, split_words)
 
 
 def get_dictation_file_path() -> str:
