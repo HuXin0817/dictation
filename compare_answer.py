@@ -39,6 +39,7 @@ def compare_answer(user_answer, answer) -> bool:
             answer_index += 1
         elif op == "insert":
             answer_index += 1
+            user_visual.append(colored(answer[i], "green"))
         elif op == "delete":
             user_visual.append(colored(user_chars[i], "red"))
             user_index += 1
@@ -46,5 +47,7 @@ def compare_answer(user_answer, answer) -> bool:
     user_visual.extend(user_chars[user_index:])
 
     user_visual_str = "".join(user_visual)
-    print(f"{e} | {answer} | {user_visual_str} | {similarity:.2f}%")
+    if not is_correct:
+        user_answer += "=> " + user_visual_str
+    print(f"{e} | {answer} | {user_answer} | {similarity:.3f}%")
     return is_correct
