@@ -45,7 +45,7 @@ class Entry:
         self._english = ""
         self._chinese = ""
 
-        words = line.split(" ")
+        words = line.split(" \u3000")
         for word in words:
             if word.isascii():
                 self._english += word + " "
