@@ -8,9 +8,8 @@ def cache(func):
 
     @wraps(func)
     def wrapper(*args):
-        with lock:
-            if args in results:
-                return results[args]
+        if args in results:
+            return results[args]
 
         res = func(*args)
         with lock:
