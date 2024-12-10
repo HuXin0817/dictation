@@ -15,7 +15,7 @@ def weighted_ratio(user_answer, answer):
             if u_char in VOWELS and a_char in VOWELS:
                 total_cost += 0.5
             elif u_char in CONSONANTS and a_char in CONSONANTS:
-                total_cost += 0.5
+                total_cost += 0.8
             else:
                 total_cost += 1
         else:
