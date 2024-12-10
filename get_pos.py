@@ -29,8 +29,8 @@ def get_pos(word: str) -> str:
     tagged = pos_tag([word])
 
     pos = ""
-    for pos_tagged in tagged:
-        if POS_MAPPING.get(pos_tagged[1], None) is not None:
-            pos += POS_MAPPING[pos_tagged[1]] + ", "
+    for tag in tagged:
+        if POS_MAPPING.get(tag[1], None) is not None:
+            pos += POS_MAPPING[tag[1]] + ", "
 
     return pos.strip(", ")
