@@ -1,3 +1,4 @@
+import os
 import random
 import subprocess
 import threading
@@ -6,13 +7,13 @@ from datetime import datetime
 from enum import Enum
 from glob import glob
 
-from clear_screen import clear
 from contexttimer import Timer
 from natsort import natsorted
 
 import audio
 from align_strings import align_strings
-from cache import cache
+from common.cache import cache
+from common.clear import clear
 from compare_answer import compare_answer
 from config import *
 from entry import Entry
@@ -23,9 +24,6 @@ info = """
 📘 Practice your English dictation skills with phrases and words.
 🔊 Make sure your audio is turned on for the best experience.
 """
-
-if not clear_is_valid:
-    clear = lambda: None
 
 
 all_entry_chinese = []
