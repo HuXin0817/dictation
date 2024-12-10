@@ -1,4 +1,5 @@
 import os
+import re
 from functools import cached_property, lru_cache
 
 import nltk
@@ -37,7 +38,7 @@ def get_pos(word: str) -> str:
     return ", ".join(pos)
 
 
-rule = [",", "/", ";", "；", "。", " ", "\u3000"]
+delimiters = r"[,/;；。 \u3000]"
 
 
 class Entry:
@@ -45,17 +46,17 @@ class Entry:
         self._english = ""
         self._chinese = ""
 
-        words = line.split(" \u3000")
-        for word in words:
-            if word.isascii():
-                self._english += word + " "
-            else:
-                self._chinese += word + "，"
+        chinese_words = []
+        english_words = []
 
-        self._english = self._english.strip(" ")
-        self._chinese = self._chinese.strip("，")
-        for i in rule:
-            self._chinese = self.chinese.replace(i, "，")
+        for word in re.split(delimiters, line):
+            if word.isascii() and word.strip():
+                english_words.append(word)
+            elif word.strip():
+                chinese_words.append(word)
+
+        self._english = " ".join(english_words)
+        self._chinese = "，".join(chinese_words)
 
     @property
     def english(self):
