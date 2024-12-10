@@ -303,7 +303,7 @@ if __name__ == "__main__":
             entries += file_entries
         dictation_file_name = "REVIEW"
         random.shuffle(entries)
-        entries = entries[:20]
+        entries = entries[:10]
     else:
         dictation_file_name = dictation_file_path[len(words_dir) + 1 : -3]
         entries = load_entries(dictation_file_path)
