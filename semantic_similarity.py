@@ -13,8 +13,7 @@ def load_embedding(word):
     inputs = tokenizer(word, return_tensors="pt", truncation=True, padding=True)
     with torch.no_grad():
         outputs = model(**inputs)
-    embedding = outputs.last_hidden_state[:, 0, :].squeeze().numpy()
-    return embedding
+    return outputs.last_hidden_state[:, 0, :].squeeze().numpy()
 
 
 def semantic_similarity(word1, word2):
