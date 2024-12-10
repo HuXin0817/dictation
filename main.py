@@ -1,4 +1,3 @@
-import os
 import random
 import subprocess
 import threading
@@ -15,7 +14,8 @@ import audio
 from align_strings import align_strings
 from cache import cache
 from compare_answer import compare_answer
-from get_pos import get_pos
+from config import *
+from entry import Entry
 from semantic_similarity import load_embedding, semantic_similarity
 
 info = """
@@ -24,13 +24,9 @@ info = """
 🔊 Make sure your audio is turned on for the best experience.
 """
 
-clear_is_valid = "TERM" in os.environ
 if not clear_is_valid:
     clear = lambda: None
 
-audio_dir = "./audios"
-grade_dir = "./grade"
-words_dir = "./words"
 
 all_entry_chinese = []
 
@@ -39,34 +35,6 @@ class AnswerType(Enum):
     RIGHT = 0
     WRONG = 1
     NOT_EXIST = 2
-
-
-class Entry:
-    def __init__(self, line: str):
-        self.english = ""
-        self.chinese = ""
-        self.pos = ""
-        self.is_phrase = False
-        self.audio_path = ""
-
-        words = line.split(" ")
-        for word in words:
-            if word.isascii():
-                self.english += word + " "
-            else:
-                self.chinese += word + "，"
-
-        self.english = self.english.strip(" ")
-        self.chinese = self.chinese.strip("，")
-        rule = [",", "/", ";", "；", "。", " ", "\u3000"]
-        for i in rule:
-            self.chinese = self.chinese.replace(i, "，")
-        self.pos = get_pos(self.english)
-        self.is_phrase = self.english.count(" ") > 0
-        self.audio_path = os.path.join(audio_dir, f"{self.english}.mp3")
-
-    def __str__(self):
-        return self.english + " " + self.pos + " " + self.chinese
 
 
 @cache
@@ -84,7 +52,7 @@ def load_entries(file_name: str) -> list[Entry]:
 
 
 def write_entries(file_name: str, entries: list[Entry]) -> None:
-    key = lambda entry: (entry.is_phrase, entry.english.lower())
+    key = lambda entry: (entry.is_phrase, entry.lower_english)
     entries.sort(key=key)
 
     max_english_length = 0
