@@ -45,6 +45,7 @@ class Entry:
     def __init__(self, line: str):
         self.english = ""
         self.chinese = ""
+        self.pos = ""
         self.is_phrase = False
         self.audio_path = ""
 
@@ -60,11 +61,12 @@ class Entry:
         rule = [",", "/", ";", "；", "。", " ", "\u3000"]
         for i in rule:
             self.chinese = self.chinese.replace(i, "，")
+        self.pos = get_pos(self.english)
         self.is_phrase = self.english.count(" ") > 0
         self.audio_path = os.path.join(audio_dir, f"{self.english}.mp3")
 
     def __str__(self):
-        return self.english + " " + get_pos(self.english) + " " + self.chinese
+        return self.english + " " + self.pos + " " + self.chinese
 
 
 @cache
