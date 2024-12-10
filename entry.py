@@ -38,37 +38,32 @@ def get_pos(word: str) -> str:
     return ", ".join(pos)
 
 
-delimiters = r"[,/;；。 \u3000]"
+delimiters = r"[,，/;；。 \u3000]"
 
 
 class Entry:
     def __init__(self, line: str):
-        self._english = ""
-        self._chinese = ""
-
-        chinese_words = []
-        english_words = []
+        self.chinese_words = []
+        self.english_words = []
 
         for word in re.split(delimiters, line):
-            if word.isascii() and word.strip():
-                english_words.append(word)
-            elif word.strip():
-                chinese_words.append(word)
+            if word:
+                if word.isascii():
+                    self.english_words.append(word)
+                else:
+                    self.chinese_words.append(word)
 
-        self._english = " ".join(english_words)
-        self._chinese = "，".join(chinese_words)
-
-    @property
+    @cached_property
     def english(self):
-        return self._english
+        return " ".join(self.english_words)
 
-    @property
+    @cached_property
     def chinese(self):
-        return self._chinese
+        return "，".join(self.chinese_words)
 
     @cached_property
     def is_phrase(self) -> bool:
-        return self.english.count(" ") > 0
+        return len(self.english_words) > 1
 
     @cached_property
     def audio_path(self) -> str:
@@ -82,5 +77,12 @@ class Entry:
     def lower_english(self) -> str:
         return self.english.lower()
 
+    @cached_property
+    def _to_str(self):
+        if self.is_phrase:
+            return self.english + " " + self.chinese
+        else:
+            return self.english + " " + self.pos + " " + self.chinese
+
     def __str__(self):
-        return self.english + " " + self.pos + " " + self.chinese
+        return self._to_str
