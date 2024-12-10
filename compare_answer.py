@@ -28,9 +28,9 @@ def weighted_ratio(user_answer, answer):
 def compare_answer(user_answer, answer) -> bool:
     user_answer = " ".join(user_answer.strip(" \u3000").lower().split())
     answer = " ".join(answer.strip(" \u3000").lower().split())
+    is_correct = user_answer == answer
 
     similarity = weighted_ratio(user_answer, answer) * 100
-    is_correct = user_answer == answer
     e = "✅" if is_correct else "❌"
 
     print(f"{e} | {answer} | {user_answer} | {similarity:.2f}%")
