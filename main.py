@@ -326,10 +326,10 @@ if __name__ == "__main__":
 
         for entry in entries:
             word_id += 1
-            if entry.english.count(" ") == 0:
-                print(f"\n📖 Word {word_id}/{word_number}:")
-            else:
+            if entry.is_phrase == 0:
                 print(f"\n📖 Phrase {word_id}/{word_number}:")
+            else:
+                print(f"\n📖 Word {word_id}/{word_number}:")
 
             entry_str = str(entry)
             if entry_str not in dictation_count:
