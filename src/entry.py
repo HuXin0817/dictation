@@ -5,7 +5,7 @@ from functools import cached_property, lru_cache
 import nltk
 from nltk import pos_tag
 
-from config import audio_dir
+from config.config import audio_dir
 
 nltk.download("averaged_perceptron_tagger", quiet=True)
 nltk.download("averaged_perceptron_tagger_eng", quiet=True)
