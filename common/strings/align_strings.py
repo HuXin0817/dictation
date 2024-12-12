@@ -1,6 +1,6 @@
 import unicodedata
 
-from common.cache import cache
+from common.functions.cache import cache
 
 
 @cache
