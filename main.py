@@ -10,14 +10,14 @@ from glob import glob
 from contexttimer import Timer
 from natsort import natsorted
 
-from common.functions.cache import cache
-from common.strings.align_strings import align_strings
-from common.terminal.clear import clear
-from config.config import *
-from src import audio
-from src.compare_answer import compare_answer
-from src.entry import Entry
-from src.semantic_similarity import load_embedding, semantic_similarity
+from cache import cache
+from align_strings import align_strings
+from clear import clear
+from config import *
+import audio
+from compare_answer import compare_answer
+from entry import Entry
+from semantic_similarity import load_embedding, semantic_similarity
 
 info = """
 🎧 Welcome to Dictation App!"

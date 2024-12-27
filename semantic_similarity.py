@@ -2,7 +2,7 @@ import torch
 from scipy.spatial.distance import cosine
 from transformers import BertModel, BertTokenizer
 
-from common.functions.cache import cache
+from cache import cache
 
 tokenizer = BertTokenizer.from_pretrained("bert-base-chinese")
 model = BertModel.from_pretrained("bert-base-chinese")
